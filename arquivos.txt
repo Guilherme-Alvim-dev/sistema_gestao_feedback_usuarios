@@ -1,0 +1,13 @@
+=== RELATORIO FEEDSMART ===
+
+Produto: sabão | Media: 8.50 | Total: 2
+Produto: celular | Media: 8.00 | Total: 1
+
+=== FEEDBACKS POR PRODUTO ===
+
+Produto: sabão
+Nota: 10.0 | Data: 26/01/2008 | Feedback: muito bom
+Nota: 7.0 | Data: 29/11/2025 | Feedback: bem top
+
+Produto: celular
+Nota: 8.0 | Data: 26/03/2026 | Feedback: achei bem rápido

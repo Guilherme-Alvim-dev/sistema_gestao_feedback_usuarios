@@ -1,0 +1,51 @@
+{
+    "usuarios": {
+        "001": {
+            "nome": "Guilherme",
+            "idade": 18,
+            "profissao": "Engenheiro",
+            "tipo": "Estudante"
+        },
+        "002": {
+            "nome": "Mariane",
+            "idade": 23,
+            "profissao": "Professora",
+            "tipo": "Gerente"
+        },
+        "003": {
+            "nome": "\u00cdtalo Ferreira",
+            "idade": 31,
+            "profissao": "Matem\u00e1tico",
+            "tipo": "Usu\u00e1rio final"
+        },
+        "Gabriel Henrique": {
+            "nome": "2",
+            "idade": 3,
+            "profissao": "3",
+            "tipo": "gerente"
+        }
+    },
+    "feedbacks": [
+        {
+            "usuario_id": "001",
+            "produto": "sab\u00e3o",
+            "texto": "muito bom",
+            "nota": 10.0,
+            "data": "26/01/2008"
+        },
+        {
+            "usuario_id": "001",
+            "produto": "celular",
+            "texto": "achei bem r\u00e1pido",
+            "nota": 8.0,
+            "data": "26/03/2026"
+        },
+        {
+            "usuario_id": "002",
+            "produto": "sab\u00e3o",
+            "texto": "bem top",
+            "nota": 7.0,
+            "data": "29/11/2025"
+        }
+    ]
+}
