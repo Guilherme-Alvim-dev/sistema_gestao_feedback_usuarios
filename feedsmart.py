@@ -1,38 +1,68 @@
 import json
 
-
-usuarios = {}
-feedbacks = []
-
 ARQUIVO_JSON = "arquivos.json"
 ARQUIVO_TXT = "arquivos.txt"
 
 
-def carregar_dados():
-
-    global usuarios, feedbacks
+def carregar_dados_txt():
+    """Carrega usuarios e feedbacks do arquivo TXT."""
+    usuarios = {}
+    feedbacks = []
 
     try:
-        arquivo = open(ARQUIVO_JSON, "r", encoding="utf-8")
-        dados = json.load(arquivo)
+        arquivo = open(ARQUIVO_TXT, "r", encoding="utf-8")
 
-        usuarios = dados["usuarios"]
-        feedbacks = dados["feedbacks"]
+        for linha in arquivo:
+            partes = linha.strip().split("|", 1)
+
+            if len(partes) == 2:
+                if partes[0] == "USUARIO":
+                    dados_usuario = json.loads(partes[1])
+                    id_usuario = dados_usuario["id"]
+
+                    usuarios[id_usuario] = {
+                        "nome": dados_usuario["nome"],
+                        "idade": dados_usuario["idade"],
+                        "profissao": dados_usuario["profissao"],
+                        "tipo": dados_usuario["tipo"]
+                    }
+
+                elif partes[0] == "FEEDBACK":
+                    dados_feedback = json.loads(partes[1])
+                    feedbacks.append(dados_feedback)
 
         arquivo.close()
 
     except FileNotFoundError:
-        usuarios = {}
-        feedbacks = []
+        return {}, []
 
     except Exception:
-        print("Erro ao carregar os dados.")
-        usuarios = {}
-        feedbacks = []
+        print("Erro ao carregar os dados do arquivo TXT.")
+        return {}, []
+
+    return usuarios, feedbacks
 
 
-def salvar_dados_json():
+def carregar_dados():
+    """Carrega usuarios e feedbacks do JSON ou, se necessario, do TXT."""
+    try:
+        arquivo = open(ARQUIVO_JSON, "r", encoding="utf-8")
+        dados = json.load(arquivo)
+        arquivo.close()
 
+        return dados["usuarios"], dados["feedbacks"]
+
+    except FileNotFoundError:
+        print("Arquivo JSON nao encontrado. Tentando carregar o TXT.")
+        return carregar_dados_txt()
+
+    except Exception:
+        print("Erro ao carregar o JSON. Tentando carregar o TXT.")
+        return carregar_dados_txt()
+
+
+def salvar_dados_json(usuarios, feedbacks):
+    """Salva usuarios e feedbacks no arquivo JSON."""
     dados = {
         "usuarios": usuarios,
         "feedbacks": feedbacks
@@ -47,11 +77,87 @@ def salvar_dados_json():
         print("Erro ao salvar o arquivo JSON.")
 
 
-def validar_data(data):
+def salvar_dados_txt(usuarios, feedbacks, matriz_relatorio=None):
+    """Salva os dados no TXT e, quando solicitado, inclui o relatorio."""
+    try:
+        arquivo = open(ARQUIVO_TXT, "w", encoding="utf-8")
 
+        arquivo.write("=== DADOS FEEDSMART ===\n")
+
+        for id_usuario in usuarios:
+            dados_usuario = {
+                "id": id_usuario,
+                "nome": usuarios[id_usuario]["nome"],
+                "idade": usuarios[id_usuario]["idade"],
+                "profissao": usuarios[id_usuario]["profissao"],
+                "tipo": usuarios[id_usuario]["tipo"]
+            }
+
+            arquivo.write(
+                "USUARIO|"
+                + json.dumps(dados_usuario, ensure_ascii=False)
+                + "\n"
+            )
+
+        for feedback in feedbacks:
+            arquivo.write(
+                "FEEDBACK|"
+                + json.dumps(feedback, ensure_ascii=False)
+                + "\n"
+            )
+
+        if matriz_relatorio is not None:
+            arquivo.write("\n=== RELATORIO FEEDSMART ===\n\n")
+
+            for linha in matriz_relatorio:
+                arquivo.write(
+                    "Produto: "
+                    + str(linha[0])
+                    + " | Media: "
+                    + f"{linha[1]:.2f}"
+                    + " | Total: "
+                    + str(linha[2])
+                    + "\n"
+                )
+
+            arquivo.write("\n=== FEEDBACKS POR PRODUTO ===\n")
+
+            for linha in matriz_relatorio:
+                produto = linha[0]
+                arquivo.write("\nProduto: " + produto + "\n")
+
+                for feedback in feedbacks:
+                    if feedback["produto"] == produto:
+                        arquivo.write(
+                            "Nota: "
+                            + str(feedback["nota"])
+                            + " | Data: "
+                            + feedback["data"]
+                            + " | Feedback: "
+                            + feedback["texto"]
+                            + "\n"
+                        )
+
+        arquivo.close()
+
+    except Exception:
+        print("Erro ao salvar o arquivo TXT.")
+
+
+def salvar_dados(usuarios, feedbacks):
+    """Salva os dados nos arquivos JSON e TXT."""
+    salvar_dados_json(usuarios, feedbacks)
+    salvar_dados_txt(usuarios, feedbacks)
+
+
+def validar_data(data):
+    """Verifica se a data e valida no formato DD/MM/AAAA."""
     partes = data.split("/")
 
     if len(partes) != 3:
+        return False
+
+    if len(partes[0]) != 2 or len(partes[1]) != 2 or len(partes[2]) != 4:
         return False
 
     try:
@@ -62,67 +168,64 @@ def validar_data(data):
     except ValueError:
         return False
 
-    if dia < 1 or dia > 31:
+    if ano < 1 or mes < 1 or mes > 12:
         return False
 
-    if mes < 1 or mes > 12:
-        return False
+    dias_por_mes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
-    if ano < 1:
+    if ano % 400 == 0 or (ano % 4 == 0 and ano % 100 != 0):
+        dias_por_mes[1] = 29
+
+    if dia < 1 or dia > dias_por_mes[mes - 1]:
         return False
 
     return True
 
 
-def cadastrar_usuario():
-
+def cadastrar_usuario(usuarios, feedbacks):
+    """Cadastra um novo usuario e salva os dados."""
     print("\n--- CADASTRO DE USUARIO ---")
 
-    id_usuario = input("Digite o ID único do usuário: ")
+    id_usuario = input("Digite o ID unico do usuario: ").strip()
 
     if id_usuario == "":
-        print("Erro: o ID não pode ser vazio.")
+        print("Erro: o ID nao pode ser vazio.")
         return
 
     if id_usuario in usuarios:
-        print("Erro: este ID ja está cadastrado.")
+        print("Erro: este ID ja esta cadastrado.")
         return
 
-    nome = input("Nome: ")
+    nome = input("Nome: ").strip()
 
     if nome == "":
-        print("Erro: o nome não pode ser vazio.")
+        print("Erro: o nome nao pode ser vazio.")
         return
 
     try:
         idade = int(input("Idade: "))
 
         if idade < 0:
-            print("Erro: a idade não pode ser negativa.")
+            print("Erro: a idade nao pode ser negativa.")
             return
 
     except ValueError:
-        print("Erro: a idade deve ser um número inteiro.")
+        print("Erro: a idade deve ser um numero inteiro.")
         return
 
-    profissao = input("Profissão: ")
+    profissao = input("Profissao: ").strip()
 
     if profissao == "":
-        print("Erro: a profissão nao pode ser vazia.")
+        print("Erro: a profissao nao pode ser vazia.")
         return
 
-    tipo_usuario = input("Tipo de usuário: ")
+    tipo_usuario = input("Tipo de usuario: ").strip()
 
     if tipo_usuario == "":
-        print("Erro: o tipo de usuário nao pode ser vazio.")
+        print("Erro: o tipo de usuario nao pode ser vazio.")
         return
 
-    dados_perfil = (
-        nome,
-        idade,
-        profissao,
-        tipo_usuario
-    )
+    dados_perfil = (nome, idade, profissao, tipo_usuario)
 
     usuarios[id_usuario] = {
         "nome": dados_perfil[0],
@@ -131,17 +234,16 @@ def cadastrar_usuario():
         "tipo": dados_perfil[3]
     }
 
-    salvar_dados_json()
-
+    salvar_dados(usuarios, feedbacks)
     print("Usuario cadastrado com sucesso!")
 
 
-def listar_usuarios():
-
+def listar_usuarios(usuarios):
+    """Lista todos os usuarios cadastrados."""
     print("\n--- LISTA DE USUARIOS ---")
 
     if not usuarios:
-        print("Nenhum usuário cadastrado.")
+        print("Nenhum usuario cadastrado.")
         return
 
     for id_usuario in usuarios:
@@ -154,34 +256,35 @@ def listar_usuarios():
         )
 
 
-def registrar_feedback():
-
+def registrar_feedback(usuarios, feedbacks):
+    """Registra um feedback associado a um usuario existente."""
     print("\n--- REGISTRAR FEEDBACK ---")
 
     if not usuarios:
         print("Erro: cadastre um usuario antes de registrar feedbacks.")
         return
 
-    id_usuario = input("Digite o ID do usuario: ")
+    id_usuario = input("Digite o ID do usuario: ").strip()
 
     if id_usuario not in usuarios:
         print("Erro: usuario nao encontrado.")
         return
 
-    produto = input("Nome do produto: ")
+    produto = input("Nome do produto: ").strip()
 
     if produto == "":
         print("Erro: o nome do produto nao pode ser vazio.")
         return
 
-    texto = input("Escreva o feedback: ")
+    texto = input("Escreva o feedback: ").strip()
 
     if texto == "":
         print("Erro: o feedback nao pode ser vazio.")
         return
 
     try:
-        nota = float(input("Nota do produto (0 a 10): "))
+        nota_texto = input("Nota do produto (0 a 10): ")
+        nota = float(nota_texto.replace(",", "."))
 
         if nota < 0 or nota > 10:
             print("Erro: a nota deve estar entre 0 e 10.")
@@ -191,10 +294,10 @@ def registrar_feedback():
         print("Erro: a nota deve ser um numero valido.")
         return
 
-    data = input("Digite a data (DD/MM/AAAA): ")
+    data = input("Digite a data (DD/MM/AAAA): ").strip()
 
     if not validar_data(data):
-        print("Erro: a data deve estar no formato DD/MM/AAAA.")
+        print("Erro: informe uma data valida no formato DD/MM/AAAA.")
         return
 
     novo_feedback = {
@@ -206,14 +309,12 @@ def registrar_feedback():
     }
 
     feedbacks.append(novo_feedback)
-
-    salvar_dados_json()
-
+    salvar_dados(usuarios, feedbacks)
     print("Feedback registrado com sucesso!")
 
 
-def gerar_relatorio_analitico():
-
+def gerar_relatorio_analitico(usuarios, feedbacks):
+    """Calcula medias, conta feedbacks e lista avaliacoes por produto."""
     print("\n--- GERANDO RELATORIO ANALITICO ---")
 
     if not feedbacks:
@@ -238,15 +339,8 @@ def gerar_relatorio_analitico():
 
     for produto in produtos_analise:
         dados = produtos_analise[produto]
-
         media = dados["soma_notas"] / dados["qtd"]
-
-        linha = [
-            produto,
-            media,
-            dados["qtd"]
-        ]
-
+        linha = [produto, media, dados["qtd"]]
         matriz_relatorio.append(linha)
 
     print("\nMATRIZ DE DADOS:")
@@ -260,7 +354,8 @@ def gerar_relatorio_analitico():
 
     print("\n--- FEEDBACKS POR PRODUTO ---")
 
-    for produto in produtos_analise:
+    for linha in matriz_relatorio:
+        produto = linha[0]
         print("\nProduto:", produto)
 
         for feedback in feedbacks:
@@ -271,55 +366,14 @@ def gerar_relatorio_analitico():
                     "| Feedback:", feedback["texto"]
                 )
 
-    try:
-        arquivo_txt = open(ARQUIVO_TXT, "w", encoding="utf-8")
-
-        arquivo_txt.write("=== RELATORIO FEEDSMART ===\n\n")
-
-        for linha in matriz_relatorio:
-            arquivo_txt.write(
-                "Produto: "
-                + str(linha[0])
-                + " | Media: "
-                + f"{linha[1]:.2f}"
-                + " | Total: "
-                + str(linha[2])
-                + "\n"
-            )
-
-        arquivo_txt.write("\n=== FEEDBACKS POR PRODUTO ===\n")
-
-        for produto in produtos_analise:
-            arquivo_txt.write(
-                "\nProduto: "
-                + produto
-                + "\n"
-            )
-
-            for feedback in feedbacks:
-                if feedback["produto"] == produto:
-                    arquivo_txt.write(
-                        "Nota: "
-                        + str(feedback["nota"])
-                        + " | Data: "
-                        + feedback["data"]
-                        + " | Feedback: "
-                        + feedback["texto"]
-                        + "\n"
-                    )
-
-        arquivo_txt.close()
-
-        print("Relatorio gravado em arquivos.txt com sucesso.")
-
-    except Exception:
-        print("Erro ao gravar o arquivo de texto.")
+    salvar_dados_txt(usuarios, feedbacks, matriz_relatorio)
+    print("Relatorio gravado em arquivos.txt com sucesso.")
 
     return matriz_relatorio
 
 
-def mostrar_insights(matriz_dados, limite_media=6.0):
-
+def mostrar_insights(matriz_dados, feedbacks, limite_media=6.0):
+    """Mostra insights automaticos sobre produtos e usuarios."""
     print("\n--- INSIGHTS AUTOMATICOS DE NEGOCIO ---")
 
     if not matriz_dados:
@@ -329,10 +383,8 @@ def mostrar_insights(matriz_dados, limite_media=6.0):
     for linha in matriz_dados:
         if linha[1] < limite_media:
             print(
-                "Produto",
-                linha[0],
-                "tem media abaixo de",
-                limite_media,
+                "Produto", linha[0],
+                "tem media abaixo de", limite_media,
                 "- precisa de melhorias."
             )
 
@@ -349,15 +401,14 @@ def mostrar_insights(matriz_dados, limite_media=6.0):
     for id_usuario in contagem_usuarios:
         if contagem_usuarios[id_usuario] > 5:
             print(
-                "Usuario",
-                id_usuario,
+                "Usuario", id_usuario,
                 "enviou mais de 5 feedbacks - perfil engajado."
             )
 
 
 def menu():
-
-    carregar_dados()
+    """Exibe o menu principal e controla a navegacao do sistema."""
+    usuarios, feedbacks = carregar_dados()
 
     while True:
         print("\n=== MENU FEEDSMART ===")
@@ -368,30 +419,30 @@ def menu():
         print("5. Ver Insights")
         print("0. Sair")
 
-        opcao = input("Escolha uma opcao: ")
+        opcao = input("Escolha uma opcao: ").strip()
 
         if opcao == "1":
-            cadastrar_usuario()
+            cadastrar_usuario(usuarios, feedbacks)
 
         elif opcao == "2":
-            listar_usuarios()
+            listar_usuarios(usuarios)
 
         elif opcao == "3":
-            registrar_feedback()
+            registrar_feedback(usuarios, feedbacks)
 
         elif opcao == "4":
-            gerar_relatorio_analitico()
+            gerar_relatorio_analitico(usuarios, feedbacks)
 
         elif opcao == "5":
-            matriz_atual = gerar_relatorio_analitico()
-            mostrar_insights(matriz_atual)
+            matriz_atual = gerar_relatorio_analitico(usuarios, feedbacks)
+            mostrar_insights(matriz_atual, feedbacks)
 
         elif opcao == "0":
             print("Saindo do sistema...")
             break
 
         else:
-            print("Opcao invalida.")
+            print("Opcao invalida. Escolha uma opcao do menu.")
 
 
 if __name__ == "__main__":

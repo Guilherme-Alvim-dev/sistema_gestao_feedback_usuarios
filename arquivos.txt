@@ -1,13 +1,37 @@
+=== DADOS FEEDSMART ===
+USUARIO|{"id": "001", "nome": "João Silva", "idade": 25, "profissao": "Estudante", "tipo": "Estudante"}
+USUARIO|{"id": "002", "nome": "Júlia Ramos", "idade": 19, "profissao": "Gerente de produto", "tipo": "Gerente"}
+USUARIO|{"id": "003", "nome": "Carlos Antony", "idade": 22, "profissao": "Professor", "tipo": "Cliente"}
+FEEDBACK|{"usuario_id": "001", "produto": "Notebook", "texto": "O produto funciona muito bem e tem boa velocidade.", "nota": 9.0, "data": "01/10/2026"}
+FEEDBACK|{"usuario_id": "001", "produto": "Notebook", "texto": "A bateria poderia durar mais.", "nota": 8.0, "data": "02/10/2026"}
+FEEDBACK|{"usuario_id": "001", "produto": "Fone Bluetooth", "texto": "O som é bom, mas a beteria acaba rápidamente", "nota": 6.0, "data": "03/10/2026"}
+FEEDBACK|{"usuario_id": "001", "produto": "Fone Bluetooth", "texto": "O acabamento poderia ser melhor", "nota": 4.0, "data": "04/10/2026"}
+FEEDBACK|{"usuario_id": "001", "produto": "Fone Bluetooth", "texto": "O produto apresenta problemas de conexão.", "nota": 3.0, "data": "05/10/2026"}
+FEEDBACK|{"usuario_id": "003", "produto": "Teclado", "texto": "Produto confortável e fácil de usar.", "nota": 9.0, "data": "08/10/2026"}
+FEEDBACK|{"usuario_id": "002", "produto": "Notebook", "texto": "O desempenho atende bem as necessidades de trabalho.", "nota": 8.0, "data": "07/10/2026"}
+FEEDBACK|{"usuario_id": "001", "produto": "Impressora", "texto": "Fácil uso e bem bonita.", "nota": 10.0, "data": "09/09/2026"}
+
 === RELATORIO FEEDSMART ===
 
-Produto: sabão | Media: 8.50 | Total: 2
-Produto: celular | Media: 8.00 | Total: 1
+Produto: Notebook | Media: 8.33 | Total: 3
+Produto: Fone Bluetooth | Media: 4.33 | Total: 3
+Produto: Teclado | Media: 9.00 | Total: 1
+Produto: Impressora | Media: 10.00 | Total: 1
 
 === FEEDBACKS POR PRODUTO ===
 
-Produto: sabão
-Nota: 10.0 | Data: 26/01/2008 | Feedback: muito bom
-Nota: 7.0 | Data: 29/11/2025 | Feedback: bem top
+Produto: Notebook
+Nota: 9.0 | Data: 01/10/2026 | Feedback: O produto funciona muito bem e tem boa velocidade.
+Nota: 8.0 | Data: 02/10/2026 | Feedback: A bateria poderia durar mais.
+Nota: 8.0 | Data: 07/10/2026 | Feedback: O desempenho atende bem as necessidades de trabalho.
 
-Produto: celular
-Nota: 8.0 | Data: 26/03/2026 | Feedback: achei bem rápido
+Produto: Fone Bluetooth
+Nota: 6.0 | Data: 03/10/2026 | Feedback: O som é bom, mas a beteria acaba rápidamente
+Nota: 4.0 | Data: 04/10/2026 | Feedback: O acabamento poderia ser melhor
+Nota: 3.0 | Data: 05/10/2026 | Feedback: O produto apresenta problemas de conexão.
+
+Produto: Teclado
+Nota: 9.0 | Data: 08/10/2026 | Feedback: Produto confortável e fácil de usar.
+
+Produto: Impressora
+Nota: 10.0 | Data: 09/09/2026 | Feedback: Fácil uso e bem bonita.

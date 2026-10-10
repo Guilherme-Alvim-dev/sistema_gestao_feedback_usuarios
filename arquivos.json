@@ -1,51 +1,80 @@
 {
     "usuarios": {
         "001": {
-            "nome": "Guilherme",
-            "idade": 18,
-            "profissao": "Engenheiro",
+            "nome": "João Silva",
+            "idade": 25,
+            "profissao": "Estudante",
             "tipo": "Estudante"
         },
         "002": {
-            "nome": "Mariane",
-            "idade": 23,
-            "profissao": "Professora",
+            "nome": "Júlia Ramos",
+            "idade": 19,
+            "profissao": "Gerente de produto",
             "tipo": "Gerente"
         },
         "003": {
-            "nome": "\u00cdtalo Ferreira",
-            "idade": 31,
-            "profissao": "Matem\u00e1tico",
-            "tipo": "Usu\u00e1rio final"
-        },
-        "Gabriel Henrique": {
-            "nome": "2",
-            "idade": 3,
-            "profissao": "3",
-            "tipo": "gerente"
+            "nome": "Carlos Antony",
+            "idade": 22,
+            "profissao": "Professor",
+            "tipo": "Cliente"
         }
     },
     "feedbacks": [
         {
             "usuario_id": "001",
-            "produto": "sab\u00e3o",
-            "texto": "muito bom",
-            "nota": 10.0,
-            "data": "26/01/2008"
+            "produto": "Notebook",
+            "texto": "O produto funciona muito bem e tem boa velocidade.",
+            "nota": 9.0,
+            "data": "01/10/2026"
         },
         {
             "usuario_id": "001",
-            "produto": "celular",
-            "texto": "achei bem r\u00e1pido",
+            "produto": "Notebook",
+            "texto": "A bateria poderia durar mais.",
             "nota": 8.0,
-            "data": "26/03/2026"
+            "data": "02/10/2026"
+        },
+        {
+            "usuario_id": "001",
+            "produto": "Fone Bluetooth",
+            "texto": "O som é bom, mas a beteria acaba rápidamente",
+            "nota": 6.0,
+            "data": "03/10/2026"
+        },
+        {
+            "usuario_id": "001",
+            "produto": "Fone Bluetooth",
+            "texto": "O acabamento poderia ser melhor",
+            "nota": 4.0,
+            "data": "04/10/2026"
+        },
+        {
+            "usuario_id": "001",
+            "produto": "Fone Bluetooth",
+            "texto": "O produto apresenta problemas de conexão.",
+            "nota": 3.0,
+            "data": "05/10/2026"
+        },
+        {
+            "usuario_id": "003",
+            "produto": "Teclado",
+            "texto": "Produto confortável e fácil de usar.",
+            "nota": 9.0,
+            "data": "08/10/2026"
         },
         {
             "usuario_id": "002",
-            "produto": "sab\u00e3o",
-            "texto": "bem top",
-            "nota": 7.0,
-            "data": "29/11/2025"
+            "produto": "Notebook",
+            "texto": "O desempenho atende bem as necessidades de trabalho.",
+            "nota": 8.0,
+            "data": "07/10/2026"
+        },
+        {
+            "usuario_id": "001",
+            "produto": "Impressora",
+            "texto": "Fácil uso e bem bonita.",
+            "nota": 10.0,
+            "data": "09/09/2026"
         }
     ]
 }
